@@ -1,6 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 # Create your models here.
+
+class Owner(models.Model):
+    name=models.CharField(max_length=50)
+
 
 class Category(models.Model):
     class Meta:
@@ -22,7 +27,16 @@ class Contact(models.Model):
     description = models.TextField(blank=True)
     show = models.BooleanField(default=True)
     picture = models.ImageField(blank=True, upload_to='pictures/%Y/%m/')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.ForeignKey(
+        Category, 
+        on_delete=models.SET_NULL, 
+        blank=True, null=True
+    )
+    owner = models.ForeignKey(#Peguei os usuarios que o própriop Django cria, pelo "from django.contrib.auth.models import User"
+        User, 
+        on_delete=models.SET_NULL, 
+        blank=True, null=True
+    )
 
 
 
