@@ -6,8 +6,9 @@ __pycache__
 db.sqlite3
 media/
 static/
-.vs
+.vscode
 /project/local_settings.py
+
 
 # Backup files # 
 *.bak 
