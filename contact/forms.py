@@ -4,11 +4,13 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import File
 from django.db.models.base import Model
 from django.forms.utils import ErrorList
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 from . import models
 
-
 class ContactForm(forms.ModelForm):
+
 
 
   first_name = forms.CharField(
@@ -95,3 +97,52 @@ class ContactForm(forms.ModelForm):
     # para validações de um único campo, deve se usar de clean_'nome_do_campo' e retornar o campo
     # como mostrado abaixo:
     return last_name
+
+class RegisterForm(UserCreationForm):
+  first_name = forms.CharField(
+    required=True,
+    widget=forms.TextInput(
+      attrs={
+        'placeholder': 'Informe seu nome',
+      }
+    ),label= 'Nome'
+  )
+
+  last_name = forms.CharField(
+    required=True,
+    widget=forms.TextInput(
+      attrs={
+        'placeholder': 'Informe seu sobrenome',
+      }
+    ),label= 'Sobrenome'
+  )
+  
+  email = forms.EmailField(
+    required=True,
+    widget=forms.TextInput(
+      attrs={
+        'placeholder': 'Informe seu E-mail',
+      }
+    ),label= 'E-mail'
+  )
+
+
+  class Meta:
+    model = User
+    fields = (
+      'first_name', 'last_name', 'email', 
+      'username', 'password1', 'password2',
+    )
+
+  def clean_email(self):
+    email = self.cleaned_data.get('email')
+
+    if User.objects.filter(email=email).exists():
+      self.add_error(
+        'email',
+        ValidationError('Email já existe')
+      )
+
+
+
+    return email
