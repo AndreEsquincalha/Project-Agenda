@@ -21,7 +21,7 @@ def create(request):
 
     if form.is_valid():
       contact = form.save()
-      return redirect('contact:update', contact_id=contact.pk)
+      return redirect('contact:update', contact_id=contact.id)
 
     #daqui pra baixo só será lido caso haja algum erro de entrada no formulario
     return render(
@@ -42,7 +42,7 @@ def create(request):
 
 def update(request, contact_id):
   contact = get_object_or_404(Contact, pk=contact_id,show = True)
-  form_action = reverse('contact:update', args=(contact_id))
+  form_action = reverse('contact:update', args=(contact_id,))
 
   if request.method == 'POST':
     form = ContactForm(request.POST, instance=contact)
@@ -72,3 +72,24 @@ def update(request, contact_id):
       'contact/create.html',
       context
   ) 
+
+def delete(request, contact_id):
+  
+  contact = get_object_or_404(
+    Contact, pk=contact_id,show = True
+  )
+
+  confirmation = request.POST.get('confirmation', 'no')
+
+  if confirmation == 'yes':
+    contact.delete()
+    return redirect('contact:index')
+  
+  return render(
+    request,
+    'contact/contact.html',
+    {
+      'contact':contact,
+      'confirmation': confirmation,
+    }
+  )
