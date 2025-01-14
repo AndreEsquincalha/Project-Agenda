@@ -11,6 +11,12 @@
         <p><b>Description: {{contact.description}}</b></p>
         <p><b>Category: {{contact.category.name}}</b></p>
 
+        {% if contact.picture %}
+            <p>
+                <img src="{{contact.picture.url}}" alt="{{contact.first_name}} {{contact.last_name}}">
+            </p> 
+        {% endif %}
+
         <div class="contact-links">
             <a href="{% url "contact:update" contact.id %}" class="btn btn-link"> Update </a>
             

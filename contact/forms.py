@@ -9,9 +9,6 @@ from . import models
 
 
 class ContactForm(forms.ModelForm):
-  
-  def __init__(self, *args,**kwargs):
-    super().__init__(*args,**kwargs)
 
 
   first_name = forms.CharField(
@@ -38,9 +35,18 @@ class ContactForm(forms.ModelForm):
     ),label= 'Telefone'
   )
   
+  picture = forms.ImageField(
+    widget=forms.FileInput(
+      attrs={
+        'accept':'image/*',
+      }
+    )
+  )
+
+
   class Meta: 
     model = models.Contact
-    fields = 'first_name', 'last_name', 'phone','email','description','category',
+    fields = 'first_name', 'last_name', 'phone','email','description','category', 'picture'
     
     
   def clean(self):
