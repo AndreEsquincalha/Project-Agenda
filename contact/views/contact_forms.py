@@ -4,10 +4,13 @@ from django.db.models import Q
 from contact.models import Contact
 from django.http import Http404
 from contact.models import Contact
+from django.contrib import messages
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from contact.forms import ContactForm
 
+@login_required(login_url='contact:login')
 def create(request):
   form_action = reverse('contact:create')
 
@@ -20,8 +23,11 @@ def create(request):
     }
 
     if form.is_valid():
-      contact = form.save()
-      return redirect('contact:update', contact_id=contact.id)
+      contact = form.save(commit=False)
+      contact.owner = request.user
+      contact.save()
+
+      return redirect('contact:update', contact_id=contact.pk)
 
     #daqui pra baixo só será lido caso haja algum erro de entrada no formulario
     return render(
@@ -40,8 +46,9 @@ def create(request):
       context
   ) 
 
+@login_required(login_url='contact:login')
 def update(request, contact_id):
-  contact = get_object_or_404(Contact, pk=contact_id,show = True)
+  contact = get_object_or_404(Contact, pk=contact_id,show = True, owner=request.user)
   form_action = reverse('contact:update', args=(contact_id,))
 
   if request.method == 'POST':
@@ -54,12 +61,13 @@ def update(request, contact_id):
 
     if form.is_valid():
       contact = form.save()
+      messages.success(request, 'Contato Atualizado')
       return redirect('contact:update', contact_id=contact.pk)
 
     #daqui pra baixo só será lido caso haja algum erro de entrada no formulario
     return render(
         request,
-        'contact/create.html',
+        'contact/update.html',
         context
     ) 
   
@@ -69,14 +77,15 @@ def update(request, contact_id):
   }
   return render(
       request,
-      'contact/create.html',
+      'contact/update.html',
       context
   ) 
 
+@login_required(login_url='contact:login')
 def delete(request, contact_id):
   
   contact = get_object_or_404(
-    Contact, pk=contact_id,show = True
+    Contact, pk=contact_id,show = True, owner=request.user
   )
 
   confirmation = request.POST.get('confirmation', 'no')

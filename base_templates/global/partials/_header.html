@@ -1,21 +1,52 @@
 <header class="header">
     <h1 class="header-heading">
+
+        {% if not user.is_authenticated %}
+            <a href="" class="header-link">
+                Agenda
+            </a>
+        {% else %}
         <a href="{% url "contact:index" %}" class="header-link">
             Agenda
         </a>
+        {% endif %}
+        
     </h1>
     <nav class="menu">
         <ul class="menu-list">
+
+            {% if user.is_authenticated %}
+            
             <li class="menu-item">
                 <a href="{% url "contact:create" %}" class="menu-link">
                     Adicionar Contato
                 </a>
             </li>
             <li class="menu-item">
-                <a href="" class="menu-link">
-                    LINK 2
+                <a href="{% url "contact:user_update" %}" class="menu-link">
+                    Perfil
                 </a>
             </li>
+            <li class="menu-item">
+                <a href="{% url "contact:logout" %}" class="menu-link">
+                    Logout
+                </a>
+            </li>
+            {% else %}
+            <li class="menu-item">
+                <a href="{% url "contact:login" %}" class="menu-link">
+                    Login
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{% url "contact:register" %}" class="menu-link">
+                    Registrar
+                </a>
+            </li>
+
+            {% endif %}
+            
+
         </ul>
     </nav>
 
